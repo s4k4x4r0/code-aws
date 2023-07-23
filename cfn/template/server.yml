@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Base setup for VS Code EC2 resources
+
+Parameters:
+  ApplicationName:
+    Type: String
+  AmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64
+  InstanceType:
+    Type: String
+    Description: Type of instance to use for EC2 runners.
+    Default: t4g.large
+  InfrastructureStackName:
+    Type: String
+    Description: The name of the stack with the Infrastructure resources
+
+Resources:
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EC2 Security Group
+      VpcId:
+        Fn::ImportValue: !Sub ${InfrastructureStackName}:VpcId
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${ApplicationName}
+  
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action: sts:AssumeRole
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref InstanceRole
+
+  CodeServerTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        EbsOptimized: True
+        IamInstanceProfile:
+          Arn: !GetAtt EC2InstanceProfile.Arn
+        ImageId: !Ref AmiId
+        InstanceType: !Ref InstanceType
+        NetworkInterfaces: 
+          - SubnetId:
+              Fn::ImportValue: !Sub ${InfrastructureStackName}:PublicSubnetId
+            Groups:
+              - !Ref ServerSecurityGroup
+            AssociatePublicIpAddress: true
+            DeviceIndex: '0'
+        UserData:
+          Fn::Base64: |
+              #!/bin/bash -xe
+              dnf update -y
+              dnf install -y jq git
+              export HOME=/home/ec2-user
+              curl -fsSL https://code-server.dev/install.sh | sh -s -- --prefix=/usr/local
+              mkdir -p ~/.config/code-server
+              echo "auth: none" > ~/.config/code-server/config.yaml
+              chown -R ec2-user:ec2-user ~/.config
+              systemctl enable --now code-server@ec2-user
+        TagSpecifications:
+          - ResourceType: instance
+            Tags: 
+              - Key: Name
+                Value: code
+
+Outputs:
+  TemplateId:
+    Description: ID of launch template
+    Value: !Ref CodeServerTemplate
+    Export:
+      Name: !Sub ${AWS::StackName}:TamplateId
+    
+
+  LatestTemplateVersion:
+    Description: Latest version number of launch template
+    Value: !GetAtt CodeServerTemplate.LatestVersionNumber
+    Export:
+      Name: !Sub ${AWS::StackName}:LatestTemplateVersion
