@@ -16,7 +16,7 @@ chmod u+x ./script/*
 ./run_instance.sh
 ```
 
-#### code-serverにアクセス
+## code-serverにアクセス
 
 まずは、以下のコマンドを実行して、ポートフォワードする。
 
@@ -27,12 +27,12 @@ chmod u+x ./script/*
 ローカルマシンのブラウザで、次のURLにアクセスすれば、code-serverにアクセス可能。
 <https://localhost:8080/>
 
-#### Remote-SSHでアクセス。
+## Remote-SSHでアクセス。
 
 エディタで`~/.ssh/config`を修正し、次の設定文をファイルの先頭に記載。
 
 ```ssh_config
-## code
+# code
 Include ~/.ssh/code/*
 ```
 
@@ -45,7 +45,7 @@ Include ~/.ssh/code/*
 VS Codeを起動し、Remote-SSHにて`code`にアクセス。
 Remote-SSHでのアクセスが完了する。
 
-#### Windowsで実施するときの注意点。
+## Windowsで実施するときの注意点。
 
 - スクリプトの実行はGit-Bash等で実施する。
 - 環境によるが、AWSの認証は2回行う必要がある。
