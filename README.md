@@ -33,7 +33,7 @@ chmod u+x ./script/*
 
 ```ssh_config
 # code
-Include ~/.ssh/code/*
+Include ~/.ssh/code/config
 ```
 
 次に、以下のコマンドを実行して、一時的な公開鍵をサーバにプッシュし、一時的な秘密鍵と設定ファイルをローカルマシンの設定に追加する。
