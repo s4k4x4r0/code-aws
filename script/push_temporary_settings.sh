@@ -4,7 +4,7 @@ cd "$(dirname "${0}")"
 
 TMPDIR="$(mktemp --directory --tmpdir=..)"
 SSH_CONFIG_DIR=~/.ssh/code
-mkdir -p $SSH_CONFIG_DIR
+mkdir -p $SSH_CONFIG_DIR/key
 
 cleanup () {
   rm -rf "$TMPDIR" "$SSH_CONFIG_DIR"
