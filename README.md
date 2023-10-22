@@ -13,7 +13,7 @@ chmod u+x ./script/*
 課金が始まるので注意。
 
 ```sh:EC2の起動
-./run_instance.sh
+./run_instance.sh -r code
 ```
 
 ## code-serverにアクセス
@@ -33,13 +33,13 @@ chmod u+x ./script/*
 
 ```ssh_config
 # code
-Include ~/.ssh/code/config
+Include ~/.ssh/code_aws/config
 ```
 
-次に、以下のコマンドを実行して、一時的な公開鍵をサーバにプッシュし、一時的な秘密鍵と設定ファイルをローカルマシンの設定に追加する。
+次に、以下のコマンドを実行して、設定ファイルをローカルマシンの設定に追加する。
 
 ```sh:一時設定のプッシュ
-./push_temporary_settings.sh
+./push_ssh_client_settings.sh ec2-user code 22
 ```
 
 VS Codeを起動し、Remote-SSHにて`code`にアクセス。

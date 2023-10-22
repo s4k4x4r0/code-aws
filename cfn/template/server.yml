@@ -76,11 +76,6 @@ Resources:
               echo "auth: none" > ~/.config/code-server/config.yaml
               chown -R ec2-user:ec2-user ~/.config
               systemctl enable --now code-server@ec2-user
-        TagSpecifications:
-          - ResourceType: instance
-            Tags: 
-              - Key: Name
-                Value: code
 
 Outputs:
   TemplateId:
