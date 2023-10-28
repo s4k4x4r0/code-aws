@@ -42,12 +42,22 @@ Include ~/.ssh/code_aws/config
 ./push_ssh_client_settings.sh ec2-user code 22
 ```
 
+次に、VS CodeがGit-BashのSSHを使用するように、VS Codeの設定を変更する。
+
+```json:settings.json
+{
+  "remote.SSH.path": "<repository_full_path>\\bat\\git-bash-ssh.bat"
+}
+```
+
 VS Codeを起動し、Remote-SSHにて`code`にアクセス。
 Remote-SSHでのアクセスが完了する。
 
 ## Windowsで実施するときの注意点。
 
-- スクリプトの実行はGit-Bash等で実施する。
+- スクリプトの実行はGit-Bashで実施する。
 - 環境によるが、AWSの認証は2回行う必要がある。
   - Git-Bashの実行環境
   - VS Codeの実行環境
+- SSHの認証に失敗する場合があるが、リトライ（再試行、Reload Window）すると成功することがある。
+  - 恐らく、失敗する場合は古い秘密鍵を使いまわそうとしているときである。
