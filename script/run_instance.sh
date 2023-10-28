@@ -38,7 +38,7 @@ if [[ ${INSTANCE_ID} = "None" ]]; then
       TAG_SPECIFICATIONS="${TAG_SPECIFICATIONS}{\"ResourceType\":\"${RT}\",\"Tags\":[{\"Key\":\"Name\",\"Value\":\"${NAME_TAG}\"}]}"
     done
     TAG_SPECIFICATIONS="$(jq -csr '.' <<< "${TAG_SPECIFICATIONS}")"
-    if aws ec2 run-instances --launch-template "LaunchTemplateName=${LAUNCH_TEMPLATE_NAME}" --tag-specifications "${TAG_SPECIFICATIONS}" >/dev/null; then
+    if aws ec2 run-instances --launch-template "LaunchTemplateName=${LAUNCH_TEMPLATE_NAME},Version=\$Latest" --tag-specifications "${TAG_SPECIFICATIONS}" >/dev/null; then
       echo "INFO: A new server has been run"
     fi
   else

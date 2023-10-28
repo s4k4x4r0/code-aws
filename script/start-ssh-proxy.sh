@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 if [[ $# -ne 3 ]]; then
-  echo "%0 USER HOST PORT" >&2
+  echo "$0 USER HOST PORT" >&2
   exit 1
 fi
 
@@ -40,6 +40,7 @@ aws ec2-instance-connect send-ssh-public-key \
     --ssh-public-key "file://${TMPDIR}/id_rsa.pub" > /dev/null; 
 
 cp -f "${TMPDIR}/id_rsa" "${SSH_CONFIG_DIR}/key"
+rm -rf "${TMPDIR}"
 
 aws ssm start-session --target "${INSTANCE_ID}" --document-name AWS-StartSSHSession --parameters portNumber="${PORT}"
 

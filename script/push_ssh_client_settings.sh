@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 if [[ $# -ne 3 ]]; then
-  echo "%0 USER HOST PORT" >&2
+  echo "$0 USER HOST PORT" >&2
   exit 1
 fi
 
@@ -16,7 +16,7 @@ mkdir -p $SSH_CONFIG_DIR/key
 
 cat << EOF >> "${SSH_CONFIG_DIR}/config"
 Host ${HOST}
-  ProxyCommand ${PWD}/start-ssh-proxy.sh %r %h %p
+  ProxyCommand bash ${PWD}/start-ssh-proxy.sh %r %h %p
   User ${USER}
   Hostname ${HOST}
   Port ${PORT}
